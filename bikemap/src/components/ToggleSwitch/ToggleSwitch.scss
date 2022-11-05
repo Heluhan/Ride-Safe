@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300&display=swap');
+
 .toggle-switch {
     position: relative;
-    width: 75px;
+    width: 200px;
     display: inline-block;
     vertical-align: middle;
     -webkit-user-select: none;
@@ -15,7 +17,7 @@
       overflow: hidden;
       cursor: pointer;
       border: 0 solid #bbb;
-      border-radius: 20px;
+      border-radius: 30px;
       margin: 0;
     }
     &-inner {
@@ -23,15 +25,28 @@
       width: 200%;
       margin-left: -100%;
       transition: margin 0.3s ease-in 0s;
-      &:before,
+      &:before {
+        display: block;
+        float: left;
+        width: 50%;
+        height: 50px;
+        padding-right: 5%;
+        line-height: 34px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 22px;
+        color: white;
+        font-weight: bold;
+        box-sizing: border-box;
+      }
       &:after {
         display: block;
         float: left;
         width: 50%;
-        height: 34px;
-        padding: 0;
+        padding-left: 5%;
+        height: 50px;
         line-height: 34px;
-        font-size: 14px;
+        font-family: 'Open Sans', sans-serif;
+        font-size: 22px;
         color: white;
         font-weight: bold;
         box-sizing: border-box;
@@ -39,9 +54,10 @@
       &:before {
         content: "Biking";
         text-transform: uppercase;
-        padding-left: 10px;
-        background-color: #f90;
+        padding-top: 2%;
+        background-color: #556B2F;
         color: #fff;
+        text-align: center;
       }
     }
     &-disabled {
@@ -55,27 +71,27 @@
     &-inner:after {
       content: "Driving";
       text-transform: uppercase;
-      padding-right: 10px;
-      background-color: #bbb;
+      padding-top: 2%;
+      background-color: #787878;
       color: #fff;
-      text-align: right;
+      text-align: center;
     }
     &-switch {
       display: block;
-      width: 24px;
+      width: 40px;
       margin: 5px;
       background: #fff;
       position: absolute;
       top: 0;
       bottom: 0;
-      right: 40px;
+      right: 150px;
       border: 0 solid #bbb;
       border-radius: 20px;
       transition: all 0.3s ease-in 0s;
     }
     &-checkbox:checked + &-label {
       .toggle-switch-inner {
-        margin-left: 0;
+        margin-left: 0px;
       }
       .toggle-switch-switch {
         right: 0px;
