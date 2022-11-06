@@ -5,6 +5,7 @@ import ToggleSwitch from './components/ToggleSwitch/ToggleSwitch';
 import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import {Map} from './components/Map/Map.js';
 import { Marker } from './components/Marker/Marker.js';
+import Warning from './components/warning/warning.js';
 
 
 const render = (status) => {
@@ -24,7 +25,9 @@ function App() {
         
       </div>
 
-        <Mode/> 
+      <Warning/>
+
+      <Mode/>
 
       
     </div>
