@@ -14,10 +14,10 @@
       "web-vitals": "^2.1.4"
     },
     "scripts": {
-      "start": "react-scripts start",
-      "build": "react-scripts build",
-      "test": "react-scripts test",
-      "eject": "react-scripts eject"
+      "start": "cd bikemap && npm run-script start",
+      "build": "cd bikemap && npm run-script build",
+      "test": "cd bikemap && npm run-script test",
+      "eject": "cd bikemap && npm run-script eject"
     },
     "eslintConfig": {
       "extends": [
@@ -38,3 +38,4 @@
       ]
     }
   }
+  
