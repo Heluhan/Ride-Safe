@@ -9,7 +9,7 @@ export const Marker = (options) => {
 
     if (!marker) {
       // console.log(`Marker Lat ${options.position.lat} and Long ${options.position.lng}`);\
-      setMarker(new window.google.maps.Marker());
+      setMarker(new window.google.maps.Marker({icon: "http://maps.google.com/mapfiles/ms/icons/green-dot.png"}));
     }
 
     // remove marker from map on unmount
