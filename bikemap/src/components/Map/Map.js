@@ -1,26 +1,54 @@
 import React from 'react';
 import geolocation from 'geolocation';
 import {db} from '../../firestore.js';
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { collection, addDoc, setDoc, query, limit, doc, getDocs, startAt, endAt } from "firebase/firestore";
 import * as geofire from 'geofire-common';
+import {getDistance} from 'geolib';
+import {DeviceUUID} from 'device-uuid';
+import { readDocs } from '../../readDocs.js';
+import {MODE} from '../ToggleSwitch/ToggleSwitch.js'
 
 
-var count = 0;
-const startTime = Date.now();
+const filterPos = (arr, center) => {
 
+  let newArr = [];
+
+  for (let i = 0; i < arr.length; i++) {
+    let elem = arr[i];
+
+    let dist = getDistance({latitude: elem.lat, longitude: elem.lng}, {latitude: center.lat, longitude: center.lng}, 1)
+
+    if (dist < 20) {
+      newArr.push(elem);
+    }
+  }
+
+  return newArr;
+}
+
+
+let prevLoc = [0, 0];
+let first = 0;
 export const Map = ({children}) => {
 
-  var biker = true;
+  // document.getElementById('pls').addEventListener("click", (change) => {
+
+  // biker = document.getElementById('warning').style.visibility === 'visible' ? 0 : 1;
+  // console.log(biker);
+  // })
+  // var biker = false;
 
   const ref = React.useRef(null);
   const [map, setMap] = React.useState();
 
-  const [lat, setLat] = React.useState(3);//43.67
-  const [lng, setLng] = React.useState(20);//-79.38
+  const [lat, setLat] = React.useState();//43.67
+  const [lng, setLng] = React.useState();//-79.38
 
   const [change, setChange] = React.useState(true);
-
+  const [prevLoc, setPrevLoc] = React.useState([0, 0]);
  
+  const [prox, setProx] = React.useState([]);
+
 
   React.useEffect(() => {
 
@@ -41,42 +69,102 @@ export const Map = ({children}) => {
   }, [ref, map, lat, lng]);
 
   navigator.geolocation.watchPosition(async (pos) => {
+    let biker = MODE;
+
 
     setLat(pos.coords.latitude);
     setLng(pos.coords.longitude);
+    console.log('Bullshit: ', lat, lng);
 
-    const diff = (Date.now() - startTime) % 1000;
-    if (biker && diff === 0) {
+    const diff = getDistance({latitude: lat, longitude: lng}, {latitude: prevLoc[0], longitude: prevLoc[1]}, 1);
+    if (biker && ((diff > 5 && diff < 100 ) || first < 3)) {
+      first ++;
 
+      console.log('BIKERRRR');
+      
+      let uuid = new DeviceUUID().get()
       try {
+        const hash = geofire.geohashForLocation([lat, lng]);
+        console.log(lat, lng);
 
-        // const hash = geofire.geohashForLocation([lat, lng])
-        const hash = 'test'
+
         if (hash) {
-          const docRef = await addDoc(collection(db, "bikers"), {
-          geoHash: hash,
-          lat: lat,
-          lng: lng,
-          createdAt: Timestamp.now()
+
+          let newA = uuid.split('-');
+          let mac = newA[newA.length - 1];
+          console.log(mac); 
+          await setDoc(doc(db, "bikers", mac), {
+            geoHash: hash,
+            lat: lat,
+            lng: lng,
           });
-          console.log("Document written with ID: ", docRef.id);
         }
       } catch (e) {
         console.error("Error adding document: ", e);
       }
+      setPrevLoc([lat, lng]);
+    } else if (!biker) {
 
-      console.log(diff);
+      console.log('DRIVERR');
 
 
-    } else if (count < 1) {
+      const diff = getDistance({latitude: lat, longitude: lng}, {latitude: prevLoc[0], longitude: prevLoc[1]}, 1);
+      if ((diff > 5 && diff < 100 ) || first < 2) {
+        first++;
+        
+        console.log(lat, lng);
+
+        // const center = [43, lng];
+        // const radiusInM = 10000;
+
+        
+        // // Each item in 'bounds' represents a startAt/endAt pair. We have to issue
+        // // a separate query for each pair. There can be up to 9 pairs of bounds
+        // // depending on overlap, but in most cases there are 4.
+        // const bounds = geofire.geohashQueryBounds(center, radiusInM);
+        // const hash = geofire.geohashForLocation([lat, lng]);
+        // console.log(center);
+        
+        // let queries = [];
+
+        // console.log('BOUNDS: ', bounds);
+        // for (const b of bounds) {
+        //   const q = query(collection(db, "bikers"), orderBy('geoHash', 'asc'), startAt(b[0]), endAt(b[1]));
+        //   queries.push(q);
+        // }
+        // console.log('questeries', queries);
+        // let docs = [];
+        // try {
+          
+        //   for (const q of queries) {
+        //     console.log('query: ',q);
+        //     const querySnapshot = await getDocs(q);
+        //     console.log(querySnapshot);
+        //     const docs_= readDocs(querySnapshot);
+  
+        //     docs.push(docs_);
+        //   }
+          
+        //   console.log('Docs: ', docs);
+
+        // } catch (e) {
+        //   console.log('Error ', e);
+        // }
+        const center = {lat: lat, lng: lng};
+        const q = query(collection(db, "bikers"), limit(10));
+        const docRefs = await getDocs(q);
+        const docs = readDocs(docRefs)
+
+        const marks = filterPos(docs, center);
+        console.log(marks);
 
 
-      console.log(count + 1);
+
+
+      }
 
     }
-
-
-  }, (err) => {console.log(err);}, {maximumAge: 2000});
+  });
 
   return (
   <>
