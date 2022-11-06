@@ -14,13 +14,19 @@ const render = (status) => {
 
 function App() {
   return (
-    <div>
-      <Mode/>
-      <Wrapper apiKey={"AIzaSyAaMJ3r0-h8QvRBLALgLT8UkylxxmHygaE"} render={render}>
-        <Map center>
-          <Marker position={{lat: 43.6532, lng: -79.3832}}/>
-        </Map>
-      </Wrapper>
+    <div style={{position: 'relative'}}>
+      <div>
+        <Wrapper apiKey={"AIzaSyAaMJ3r0-h8QvRBLALgLT8UkylxxmHygaE"} render={render}>
+          <Map center>
+            <Marker position={{lat: 43.6532, lng: -79.3832}}/>
+          </Map>
+        </Wrapper>
+        
+      </div>
+
+        <Mode/> 
+
+      
     </div>
   );
 }

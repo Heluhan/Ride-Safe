@@ -50,7 +50,7 @@ export const Map = ({children}) => {
     </form> */}
 
 
-    <div ref={ref} style={{ height: '100vh', width: '100%' }} />
+    <div ref={ref} style={{ height: '100vh', width: '100%', position: 'absolute'}} />
     {/* {children} */}
     {React.Children.map(children, (child) => {
       if (React.isValidElement(child)) {
