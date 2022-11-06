@@ -1,6 +1,5 @@
 import React from 'react';
 import geolocation from 'geolocation';
-import {markerPosition} from '../Marker/Marker.js'
 
 
 
@@ -13,20 +12,7 @@ export const Map = ({children}) => {
 
   const [change, setChange] = React.useState(true);
 
-  navigator.geolocation.watchPosition((pos) => {
-    // console.log(pos);
-    // if (err) {
-    //   console.log('Error in getting location');
-    // }
-
-    setLat(pos.coords.latitude);
-    markerPosition.lat = lat;
-
-    setLng(pos.coords.longitude);
-    markerPosition.lng = lng;
-
-    console.log(`Lat ${lat} and Long ${lng}`);
-  });
+ 
 
   React.useEffect(() => {
 
@@ -46,6 +32,18 @@ export const Map = ({children}) => {
     }
   }, [ref, map, lat, lng]);
 
+  navigator.geolocation.watchPosition((pos) => {
+    // console.log(pos);
+    // if (err) {
+    //   console.log('Error in getting location');
+    // }
+
+    setLat(pos.coords.latitude);
+
+    setLng(pos.coords.longitude);
+
+    console.log(`Lat ${lat} and Long ${lng}`);
+  });
 
   return (
   <>
@@ -72,7 +70,7 @@ export const Map = ({children}) => {
       if (React.isValidElement(child)) {
         // set the map prop on the child component
         // @ts-ignore
-        return React.cloneElement(child, { map });
+        return React.cloneElement(child, { map, lat, lng });
       }
     })}
   </>

@@ -1,37 +1,28 @@
 import React, { Component } from 'react';
 
-export var markerPosition = {lat: 3, lng: 20};
-
 
 export const Marker = (options) => {
   const [marker, setMarker] = React.useState();
 
+
   React.useEffect(() => {
 
     if (!marker) {
-      // console.log(`Marker Lat ${options.position.lat} and Long ${options.position.lng}`);
-      let newMarker = new window.google.maps.Marker();
-      let newOptions = {position: markerPosition, map: options.map};
-
-      newMarker.setOptions(newOptions);
-      setMarker(newMarker);
-
-
-
-
+      // console.log(`Marker Lat ${options.position.lat} and Long ${options.position.lng}`);\
+      setMarker(new window.google.maps.Marker());
     }
 
     // remove marker from map on unmount
     return () => {
-      if (marker) {
-        marker.setMap(null);
-      }
+      // if (marker) {
+      //   marker.setMap(null);
+      // }
     };
-  }, [marker, options]);
+  }, [marker]);
   React.useEffect(() => {
     if (marker) {
       marker.setMap(null);
-      let newOptions = {position: markerPosition, map: options.map};
+      let newOptions = {position: {lat: options.lat, lng: options.lng}, map: options.map};
       // console.log('New marker ', newOptions);
       marker.setOptions(newOptions);
       console.log(marker);
