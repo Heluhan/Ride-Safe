@@ -6,6 +6,7 @@ import { Wrapper, Status } from "@googlemaps/react-wrapper";
 import {Map} from './components/Map/Map.js';
 import { Marker } from './components/Marker/Marker.js';
 import Warning from './components/warning/warning.js';
+import {MarkerList} from '../src/components/MarkerList/MarkerList.js'
 
 
 const render = (status) => {
@@ -20,6 +21,7 @@ function App() {
         <Wrapper apiKey={"AIzaSyAaMJ3r0-h8QvRBLALgLT8UkylxxmHygaE"} render={render}>
           <Map id="map">
             <Marker position={{lat: 43.6532, lng: -79.3832}}/>
+            <MarkerList/>
           </Map>
         </Wrapper>
         

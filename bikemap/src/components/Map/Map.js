@@ -17,8 +17,8 @@ const filterPos = (arr, center) => {
     let elem = arr[i];
 
     let dist = getDistance({latitude: elem.lat, longitude: elem.lng}, {latitude: center.lat, longitude: center.lng}, 1)
-
-    if (dist < 20) {
+    // console.log(center.geoHash, elem.geoHash);
+    if (dist < 5000000 && center.geoHash !== elem.geoHash) {
       newArr.push(elem);
     }
   }
@@ -74,25 +74,25 @@ export const Map = ({children}) => {
 
     setLat(pos.coords.latitude);
     setLng(pos.coords.longitude);
-    console.log('Bullshit: ', lat, lng);
+    // console.log('Bullshit: ', lat, lng);
 
     const diff = getDistance({latitude: lat, longitude: lng}, {latitude: prevLoc[0], longitude: prevLoc[1]}, 1);
     if (biker && ((diff > 5 && diff < 100 ) || first < 3)) {
       first ++;
 
-      console.log('BIKERRRR');
+      // console.log('BIKERRRR');
       
       let uuid = new DeviceUUID().get()
       try {
         const hash = geofire.geohashForLocation([lat, lng]);
-        console.log(lat, lng);
+        // console.log(lat, lng);
 
 
         if (hash) {
 
           let newA = uuid.split('-');
           let mac = newA[newA.length - 1];
-          console.log(mac); 
+          // console.log(mac); 
           await setDoc(doc(db, "bikers", mac), {
             geoHash: hash,
             lat: lat,
@@ -103,16 +103,17 @@ export const Map = ({children}) => {
         console.error("Error adding document: ", e);
       }
       setPrevLoc([lat, lng]);
+      setProx([]);
     } else if (!biker) {
 
-      console.log('DRIVERR');
+      // console.log('DRIVERR');
 
 
       const diff = getDistance({latitude: lat, longitude: lng}, {latitude: prevLoc[0], longitude: prevLoc[1]}, 1);
       if ((diff > 5 && diff < 100 ) || first < 2) {
         first++;
         
-        console.log(lat, lng);
+        // console.log(lat, lng);
 
         // const center = [43, lng];
         // const radiusInM = 10000;
@@ -122,7 +123,6 @@ export const Map = ({children}) => {
         // // a separate query for each pair. There can be up to 9 pairs of bounds
         // // depending on overlap, but in most cases there are 4.
         // const bounds = geofire.geohashQueryBounds(center, radiusInM);
-        // const hash = geofire.geohashForLocation([lat, lng]);
         // console.log(center);
         
         // let queries = [];
@@ -150,14 +150,14 @@ export const Map = ({children}) => {
         // } catch (e) {
         //   console.log('Error ', e);
         // }
-        const center = {lat: lat, lng: lng};
+        const hash = geofire.geohashForLocation([lat, lng]);
+        const center = {lat: lat, lng: lng, geoHash: hash};
         const q = query(collection(db, "bikers"), limit(10));
         const docRefs = await getDocs(q);
         const docs = readDocs(docRefs)
 
         const marks = filterPos(docs, center);
-        console.log(marks);
-
+        setProx(marks);
 
 
 
@@ -191,7 +191,7 @@ export const Map = ({children}) => {
       if (React.isValidElement(child)) {
         // set the map prop on the child component
         // @ts-ignore
-        return React.cloneElement(child, { map, lat, lng });
+        return React.cloneElement(child, { map, lat, lng , prox });
       }
     })}
   </>

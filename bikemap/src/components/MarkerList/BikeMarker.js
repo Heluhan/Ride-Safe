@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
+import { oldMarkers } from './MarkerList.js';
 
-
-export const Marker = (options) => {
+export const BikeMarker = (options) => {
   const [marker, setMarker] = React.useState();
-
+  // console.log(options);
 
   React.useEffect(() => {
 
@@ -22,9 +22,9 @@ export const Marker = (options) => {
   React.useEffect(() => {
     if (marker) {
       marker.setMap(null);
-      let newOptions = {position: {lat: options.lat, lng: options.lng}, map: options.map};
       // console.log('New marker ', newOptions);
-      marker.setOptions(newOptions);
+      marker.setOptions(options);
+      oldMarkers.push(marker);
       // console.log(marker);
     }
   }, [marker, options]);
