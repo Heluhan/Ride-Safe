@@ -1,9 +1,17 @@
 import React from 'react';
 import geolocation from 'geolocation';
+import {db} from '../../firestore.js';
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+import * as geofire from 'geofire-common';
 
 
+var count = 0;
+const startTime = Date.now();
 
 export const Map = ({children}) => {
+
+  var biker = true;
+
   const ref = React.useRef(null);
   const [map, setMap] = React.useState();
 
@@ -32,18 +40,43 @@ export const Map = ({children}) => {
     }
   }, [ref, map, lat, lng]);
 
-  navigator.geolocation.watchPosition((pos) => {
-    // console.log(pos);
-    // if (err) {
-    //   console.log('Error in getting location');
-    // }
+  navigator.geolocation.watchPosition(async (pos) => {
 
     setLat(pos.coords.latitude);
-
     setLng(pos.coords.longitude);
 
-    console.log(`Lat ${lat} and Long ${lng}`);
-  });
+    const diff = (Date.now() - startTime) % 1000;
+    if (biker && diff === 0) {
+
+      try {
+
+        // const hash = geofire.geohashForLocation([lat, lng])
+        const hash = 'test'
+        if (hash) {
+          const docRef = await addDoc(collection(db, "bikers"), {
+          geoHash: hash,
+          lat: lat,
+          lng: lng,
+          createdAt: Timestamp.now()
+          });
+          console.log("Document written with ID: ", docRef.id);
+        }
+      } catch (e) {
+        console.error("Error adding document: ", e);
+      }
+
+      console.log(diff);
+
+
+    } else if (count < 1) {
+
+
+      console.log(count + 1);
+
+    }
+
+
+  }, (err) => {console.log(err);}, {maximumAge: 2000});
 
   return (
   <>
