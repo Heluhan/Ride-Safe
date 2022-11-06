@@ -1,24 +1,40 @@
 import React from 'react';
+import geolocation from 'geolocation';
+import {markerPosition} from '../Marker/Marker.js'
 
-const google = window.google;
+
 
 export const Map = ({children}) => {
   const ref = React.useRef(null);
   const [map, setMap] = React.useState();
 
-  const [lat, setLat] = React.useState(0);
-  const [lng, setLng] = React.useState(0);
+  const [lat, setLat] = React.useState(3);//43.67
+  const [lng, setLng] = React.useState(20);//-79.38
 
   const [change, setChange] = React.useState(true);
 
+  navigator.geolocation.watchPosition((pos) => {
+    // console.log(pos);
+    // if (err) {
+    //   console.log('Error in getting location');
+    // }
+
+    setLat(pos.coords.latitude);
+    markerPosition.lat = lat;
+
+    setLng(pos.coords.longitude);
+    markerPosition.lng = lng;
+
+    console.log(`Lat ${lat} and Long ${lng}`);
+  });
 
   React.useEffect(() => {
 
     const options = {
-      zoom: 12,
+      zoom: 16,
       center: {lat: lat, lng: lng}
     };
-    console.log(map);
+    // console.log(map);
 
     if (ref.current && !map ) {
       setMap(new window.google.maps.Map(ref.current, options));
