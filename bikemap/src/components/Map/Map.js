@@ -33,7 +33,7 @@ export const Map = ({children}) => {
 
   return (
   <>
-
+{/* 
     <form onSubmit={(e) => {e.preventDefault()}}>
       <label>
         Latitude:
@@ -47,8 +47,7 @@ export const Map = ({children}) => {
 
       <input type='submit' value="latSubmit" />
 
-    </form>
-
+    </form> */}
 
 
     <div ref={ref} style={{ height: '100vh', width: '100%' }} />
